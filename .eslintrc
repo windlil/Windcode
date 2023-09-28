@@ -5,6 +5,8 @@
     "@typescript-eslint/brace-style": "off",
     "curly": "off",
     "@typescript-eslint/consistent-type-imports": "off",
-    "sort-imports": "off"
+    "sort-imports": "off",
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": "off"
   }
 }

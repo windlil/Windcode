@@ -13,7 +13,7 @@
     },
     {
       "id": 2,
-      "type": "text",
+      "type": "button",
       "top": 200,
       "left": 200,
       "zIndex": 1

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 
 interface Prop {
   blockConfig: { [key: string]: string }
 }
 
 const props = defineProps<Prop>()
+const registerConfig = inject('registerConfig')
 
 const style = computed(() => {
   return {
@@ -14,12 +15,14 @@ const style = computed(() => {
     zIndex: `${props.blockConfig.zIndex}`,
   }
 })
+
+const currentComponent = computed(() => {
+  return (registerConfig as any).componentMap.get(props.blockConfig.type).preview()
+})
 </script>
 
 <template>
-  <div class="editor-block" :style="style">
-    这是一个代码块
-  </div>
+  <component :is="currentComponent" class="editor-block" :style="style" />
 </template>
 
 <style scoped lang="scss">
