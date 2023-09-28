@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 import data from './data.json'
 import Editor from '@/components/editor/index.vue'
 
 const state = ref(data)
+const config = state.value.block
+
+provide('blockConfig', config)
 </script>
 
 <template>

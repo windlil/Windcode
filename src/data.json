@@ -2,5 +2,21 @@
   "container": {
     "width": 1000,
     "height": 800
-  }
+  },
+  "block": [
+    {
+      "id": 1,
+      "type": "text",
+      "top": 100,
+      "left": 100,
+      "zIndex": 1
+    },
+    {
+      "id": 2,
+      "type": "text",
+      "top": 200,
+      "left": 200,
+      "zIndex": 1
+    }
+  ]
 }

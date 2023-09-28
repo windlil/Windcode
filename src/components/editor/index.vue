@@ -1,9 +1,8 @@
 <script setup lang="ts">
-interface Prop {
-  data: object
-}
+import { inject } from 'vue'
+import Block from '../block/index.vue'
 
-defineProps<Prop>()
+const config = inject('blockConfig')
 </script>
 
 <template>
@@ -17,7 +16,9 @@ defineProps<Prop>()
       </div>
       <div class="editor-center-container">
         <div class="editor-canvas">
-
+          <template v-for="block in config" :key="block.id">
+            <Block :block-config="block" />
+          </template>
         </div>
       </div>
     </div>
@@ -69,6 +70,7 @@ defineProps<Prop>()
 
       // 画布
       .editor-canvas {
+        position: relative;
         height: 600px;
         width: 400px;
         background-color: pink;
