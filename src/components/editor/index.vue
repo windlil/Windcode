@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EditorLeft from '../editor-left/index.vue'
 import Block from '../block/index.vue'
 
 interface Prop {
@@ -11,7 +12,7 @@ defineProps<Prop>()
 <template>
   <div class="editor">
     <div class="editor-left">
-
+      <EditorLeft />
     </div>
     <div class="editor-center">
       <div class="editor-center-top">

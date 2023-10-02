@@ -17,7 +17,7 @@ const style = computed(() => {
 })
 
 const currentComponent = computed(() => {
-  return (registerConfig as any).componentMap.get(props.blockConfig.type).preview()
+  return (registerConfig as any).componentMap.get(props.blockConfig.type).render()
 })
 </script>
 
