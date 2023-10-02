@@ -44,12 +44,12 @@ defineProps<Prop>()
 
   &-left {
     width: 340px;
-    background-color: blue;
+    background-color: var(--eidtor-sider-background-color);
   }
 
   &-right {
     width: 340px;
-    background-color: rgb(72, 66, 194);
+    background-color: var(--eidtor-sider-background-color);
   }
 
   &-center {
@@ -59,7 +59,7 @@ defineProps<Prop>()
 
     &-top {
       height: 50px;
-      background-color: purple;
+      background-color: var(--editor-top-background-color);
     }
 
     &-container {
@@ -70,7 +70,7 @@ defineProps<Prop>()
       justify-content: center;
       width: 100%;
       overflow: auto;
-      background-color: rgb(153, 153, 153);
+      background-color: var(--editor-center-background-color);
 
       // 画布
       .editor-canvas {
