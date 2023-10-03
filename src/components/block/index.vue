@@ -2,34 +2,42 @@
 import { computed, inject, onMounted, ref } from 'vue'
 
 interface Prop {
-  blockConfig: { [key: string]: number }
+  blockConfig: {
+    top: number
+    left: number
+    zIndex: number
+    type: string
+    center: boolean
+  }
 }
 
 const props = defineProps<Prop>()
 const registerConfig = inject('registerConfig')
+const { blockConfig } = props
 
 const currentComponentRef = ref()
-const setCurrentComponentRef = function(e: any) {
+const setCurrentComponentRef = function (e: any) {
   currentComponentRef.value = e
 }
 
 const style = computed(() => {
   return {
-    top: `${props.blockConfig.top}px`,
-    left: `${props.blockConfig.left}px`,
-    zIndex: `${props.blockConfig.zIndex}`,
+    top: `${blockConfig.top}px`,
+    left: `${blockConfig.left}px`,
+    zIndex: `${blockConfig.zIndex}`,
   }
 })
 
 const currentComponent = computed(() => {
-  return (registerConfig as any).componentMap.get(props.blockConfig.type).render()
+  return (registerConfig as any).componentMap.get(blockConfig.type).render()
 })
 
 onMounted(() => {
-  if (props.blockConfig.center && currentComponentRef.value) {
-    // props.blockConfig.top = props.blockConfig.top - currentComponentRef.value!.offsetHeight / 2
-    // props.blockConfig.left = props.blockConfig.left - currentComponentRef.value!.offsetWidth / 2
-    console.log(props.blockConfig.top, currentComponentRef.value)
+  if (blockConfig.center && currentComponentRef.value) {
+    const el: HTMLElement = currentComponentRef.value.$el ?? currentComponentRef.value
+    blockConfig.top = blockConfig.top - el.offsetHeight / 2
+    blockConfig.left = blockConfig.left - el.offsetWidth / 2
+    blockConfig.center = false
   }
 })
 </script>

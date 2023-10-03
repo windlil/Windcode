@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import Block from '../block/index.vue'
+import { useDrag } from './editor'
 
 interface Prop {
   modelValue: any
@@ -17,35 +18,11 @@ const data = computed({
   }
 })
 
+const canvasRef = ref<HTMLElement>()
 const currentComponent = ref<any>(null)
 const registerConfig = inject<any>('registerConfig')
 
-function _dragstart(e: DragEvent, component: any) {
-  currentComponent.value = component
-}
-
-function _dragenter(e: DragEvent) {
-  e.dataTransfer!.dropEffect = 'move'
-}
-
-function _dragleave(e: DragEvent) {
-  e.dataTransfer!.dropEffect = 'none'
-}
-
-function _dragover(e: DragEvent) {
-  e.preventDefault()
-}
-
-function _drop(e: DragEvent) {
-  data.value.block.push({
-    type: currentComponent!.value.type,
-    top: e.offsetY,
-    left: e.offsetX,
-    zIndex: 1,
-    center: true
-  })
-  currentComponent.value = null
-}
+const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
 </script>
 
 <template>
@@ -59,7 +36,8 @@ function _drop(e: DragEvent) {
           <div
             class="editor-left-box"
             draggable="true"
-            @dragstart="_dragstart($event, component)"
+            @dragstart="_dragstart(component)"
+            @dragend="_dragend"
           >
             <component :is="component.preview()" />
             <div class="editor-left-box__name">
@@ -71,15 +49,12 @@ function _drop(e: DragEvent) {
     </div>
     <div class="editor-center">
       <div class="editor-center-top">
-
+        1
       </div>
       <div class="editor-center-container">
         <div
+          ref="canvasRef"
           class="editor-canvas"
-          @dragenter="_dragenter"
-          @dragleave="_dragleave"
-          @dragover="_dragover"
-          @drop="_drop"
         >
           <template v-for="block in data.block" :key="block.id">
             <Block :block-config="block" />
@@ -88,7 +63,7 @@ function _drop(e: DragEvent) {
       </div>
     </div>
     <div class="editor-right">
-
+      1
     </div>
   </div>
 </template>
