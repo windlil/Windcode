@@ -8,6 +8,7 @@ interface Prop {
     zIndex: number
     type: string
     center: boolean
+    focus?: boolean
   }
 }
 
@@ -34,6 +35,7 @@ const currentComponent = computed(() => {
 
 onMounted(() => {
   if (blockConfig.center && currentComponentRef.value) {
+    // 判断是否为vant组件
     const el: HTMLElement = currentComponentRef.value.$el ?? currentComponentRef.value
     blockConfig.top = blockConfig.top - el.offsetHeight / 2
     blockConfig.left = blockConfig.left - el.offsetWidth / 2
@@ -43,11 +45,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="currentComponent" :ref="setCurrentComponentRef" class="editor-block" :style="style" />
+  <div class="editor-block" :style="style">
+    <component
+      :is="currentComponent"
+      :ref="setCurrentComponentRef"
+    />
+  </div>
 </template>
 
 <style scoped lang="scss">
 .editor-block {
   position: absolute;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent !important;
+  }
 }
 </style>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import Block from '../block/index.vue'
-import { useDrag } from './editor'
+import { useDrag } from '@/hooks/useDrag'
+import { useFocus } from '@/hooks/useFocus'
+import { useMoveBlock } from '@/hooks/useMoveBlock'
 
 interface Prop {
   modelValue: any
@@ -22,7 +24,14 @@ const canvasRef = ref<HTMLElement>()
 const currentComponent = ref<any>(null)
 const registerConfig = inject<any>('registerConfig')
 
+// 绑定拖拽事件
 const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
+
+// 焦点获取
+const { _mouseDown, canvasClick, focusList } = useFocus(data, () => {
+  // block拖拽
+  useMoveBlock(focusList)
+})
 </script>
 
 <template>
@@ -55,9 +64,10 @@ const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
         <div
           ref="canvasRef"
           class="editor-canvas"
+          @click="canvasClick"
         >
           <template v-for="block in data.block" :key="block.id">
-            <Block :block-config="block" />
+            <Block :class="{ focus: block?.focus }" :block-config="block" @click="_mouseDown($event, block)" />
           </template>
         </div>
       </div>
@@ -69,10 +79,16 @@ const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
 </template>
 
 <style scoped lang="scss">
+.focus {
+  &::after {
+    border: 2px dashed rgb(255, 98, 0);
+  }
+}
 .editor {
   display: flex;
   width: 100%;
   height: 100%;
+  user-select: none;
 
   &>div {
     height: 100%;
@@ -160,7 +176,7 @@ const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
         position: relative;
         height: 600px;
         width: 400px;
-        background-color: pink;
+        background-color: rgb(227, 227, 227);
       }
     }
   }
