@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
+import { computed, inject, reactive, ref } from 'vue'
 import Block from '../block/index.vue'
 import { useDrag } from '@/hooks/useDrag'
 import { useFocus } from '@/hooks/useFocus'
@@ -23,6 +23,7 @@ const data = computed({
 const canvasRef = ref<HTMLElement>()
 const currentComponent = ref<any>(null)
 const registerConfig = inject<any>('registerConfig')
+let _lineData = reactive<any>({})
 
 // 绑定拖拽事件
 const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
@@ -30,7 +31,8 @@ const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
 // 焦点获取
 const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(data, () => {
   // block拖拽
-  useMoveBlock(focusData, lastSelectedIndexBlock)
+  const { lineData } = useMoveBlock(focusData, lastSelectedIndexBlock)
+  _lineData = lineData
 })
 </script>
 
@@ -69,6 +71,8 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
           <template v-for="(block, index) in data.block" :key="block.id">
             <Block :class="{ focus: block?.focus }" :block-config="block" @click="_mouseDown($event, block, index)" />
           </template>
+          <div v-if="_lineData?.x" :style="{ left: `${_lineData.x}px` }" class="lineX" />
+          <div v-if="_lineData?.y" :style="{ top: `${_lineData.y}px` }" class="lineY" />
         </div>
       </div>
     </div>
@@ -79,6 +83,19 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
 </template>
 
 <style scoped lang="scss">
+.lineX {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: 1px dashed red;
+}
+
+.lineY {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border: 1px dashed red;
+}
 .focus {
   &::after {
     border: 4px dashed rgb(255, 98, 0);

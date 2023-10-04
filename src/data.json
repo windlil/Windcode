@@ -8,13 +8,15 @@
       "type": "text",
       "top": 100,
       "left": 100,
-      "zIndex": 1
+      "zIndex": 1,
+      "center": true
     },
     {
       "type": "button",
       "top": 200,
       "left": 200,
-      "zIndex": 1
+      "zIndex": 1,
+      "center": true
     }
   ]
 }
