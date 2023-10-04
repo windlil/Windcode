@@ -37,7 +37,7 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
 <template>
   <div class="editor">
     <div class="editor-left">
-      <div class="editor-left">
+      <div class="editor-left" @mousedown="canvasClick">
         <div class="editor-left-title">
           组件列表
         </div>
