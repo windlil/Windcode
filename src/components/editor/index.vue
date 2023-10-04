@@ -28,9 +28,9 @@ const registerConfig = inject<any>('registerConfig')
 const { _dragstart, _dragend } = useDrag(data, canvasRef, currentComponent)
 
 // 焦点获取
-const { _mouseDown, canvasClick, focusList } = useFocus(data, () => {
+const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(data, () => {
   // block拖拽
-  useMoveBlock(focusList)
+  useMoveBlock(focusData, lastSelectedIndexBlock)
 })
 </script>
 
@@ -66,8 +66,8 @@ const { _mouseDown, canvasClick, focusList } = useFocus(data, () => {
           class="editor-canvas"
           @click="canvasClick"
         >
-          <template v-for="block in data.block" :key="block.id">
-            <Block :class="{ focus: block?.focus }" :block-config="block" @click="_mouseDown($event, block)" />
+          <template v-for="(block, index) in data.block" :key="block.id">
+            <Block :class="{ focus: block?.focus }" :block-config="block" @click="_mouseDown($event, block, index)" />
           </template>
         </div>
       </div>
@@ -81,7 +81,7 @@ const { _mouseDown, canvasClick, focusList } = useFocus(data, () => {
 <style scoped lang="scss">
 .focus {
   &::after {
-    border: 2px dashed rgb(255, 98, 0);
+    border: 4px dashed rgb(255, 98, 0);
   }
 }
 .editor {

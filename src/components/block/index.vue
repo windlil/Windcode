@@ -9,6 +9,8 @@ interface Prop {
     type: string
     center: boolean
     focus?: boolean
+    width?: number
+    height?: number
   }
 }
 
@@ -39,6 +41,8 @@ onMounted(() => {
     const el: HTMLElement = currentComponentRef.value.$el ?? currentComponentRef.value
     blockConfig.top = blockConfig.top - el.offsetHeight / 2
     blockConfig.left = blockConfig.left - el.offsetWidth / 2
+    blockConfig.width = el.offsetWidth
+    blockConfig.height = el.offsetHeight
     blockConfig.center = false
   }
 })
