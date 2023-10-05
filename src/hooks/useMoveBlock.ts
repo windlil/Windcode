@@ -1,4 +1,5 @@
 import { reactive, type ComputedRef } from 'vue'
+import { eventsBus } from '@/utils/emit'
 
 interface blockConfig {
   top: number
@@ -15,6 +16,7 @@ export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any
   const moveState: any = {
     startX: 0,
     startY: 0,
+    isDrag: false,
     currentFocus: focusList.value.focus.map(({ top, left }) => ({ top, left }))
   }
 
@@ -29,9 +31,12 @@ export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any
   })
 
   function _mousedown(e: MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
     const { width: lastBlockWidth, height: lastBlockHeight } = lastBlock.value
     moveState.startX = e.clientX
     moveState.startY = e.clientY
+    moveState.isDrag = false
     moveState.allLines = (function () {
       const { unfocus } = focusList.value
       const lines: {
@@ -78,6 +83,10 @@ export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any
   }
 
   function _mousemove(e: MouseEvent) {
+    if (!moveState.isDrag) {
+      moveState.isDrag = true
+      eventsBus.emit('drag:start')
+    }
     let { clientX: moveX, clientY: moveY } = e
     let x = null
     let y = null
@@ -118,6 +127,11 @@ export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any
     document.removeEventListener('mousemove', _mousemove)
     lineData.x = null
     lineData.y = null
+
+    if (moveState.isDrag) {
+      eventsBus.emit('drag:end')
+      moveState.isDrag = false
+    }
   }
   if (focusList.value.focus.length > 0) {
     document.addEventListener('mousedown', _mousedown)

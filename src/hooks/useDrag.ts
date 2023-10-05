@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { eventsBus } from '@/utils/emit'
 
 export function useDrag(data: any, canvasRef: Ref<HTMLElement | undefined>, currentComponent: Ref<any>) {
   function _dragstart(component: any) {
@@ -40,11 +41,13 @@ export function useDrag(data: any, canvasRef: Ref<HTMLElement | undefined>, curr
         canvasRef.value?.addEventListener('dragleave', _dragleave)
         canvasRef.value?.addEventListener('dragover', _dragover)
         canvasRef.value?.addEventListener('drop', _drop)
+        eventsBus.emit('drag:start')
       } else {
         canvasRef.value?.removeEventListener('dragenter', _dragenter)
         canvasRef.value?.removeEventListener('dragleave', _dragleave)
         canvasRef.value?.removeEventListener('dragover', _dragover)
         canvasRef.value?.removeEventListener('drop', _drop)
+        eventsBus.emit('drag:end')
       }
     }
   }

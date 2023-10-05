@@ -23,14 +23,6 @@ const setCurrentComponentRef = function (e: any) {
   currentComponentRef.value = e
 }
 
-const style = computed(() => {
-  return {
-    top: `${blockConfig.top}px`,
-    left: `${blockConfig.left}px`,
-    zIndex: `${blockConfig.zIndex}`,
-  }
-})
-
 const currentComponent = computed(() => {
   return (registerConfig as any).componentMap.get(blockConfig.type).render()
 })
@@ -49,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="editor-block" :style="style">
+  <div class="editor-block">
     <component
       :is="currentComponent"
       :ref="setCurrentComponentRef"

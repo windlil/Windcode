@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { computed, inject, reactive, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { inject, reactive, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import Block from '../block/index.vue'
 import { useDrag } from '@/hooks/useDrag'
 import { useFocus } from '@/hooks/useFocus'
 import { useMoveBlock } from '@/hooks/useMoveBlock'
-
-interface Prop {
-  modelValue: any
-}
+import { useCommand } from '@/hooks/useCommand'
+import { useDataStore } from '@/store/modules/data'
 
 interface buttonListItem {
   label: string
@@ -16,35 +15,28 @@ interface buttonListItem {
   handler: () => any
 }
 
-const props = defineProps<Prop>()
-const emit = defineEmits(['update:modelValue'])
-const data = computed({
-  get() {
-    return props.modelValue
-  },
-  set(newValue) {
-    emit('update:modelValue', structuredClone(newValue))
-  }
-})
+const dataStore = useDataStore()
+const { data } = storeToRefs(dataStore)
 
 const canvasRef = ref<HTMLElement>()
 const currentComponent = ref<any>(null)
 const registerConfig = inject<any>('registerConfig')
 let _lineData = reactive<any>({})
+const { state } = useCommand(data, dataStore.setData)
 
 const buttonList: buttonListItem[] = [
   {
     label: '撤销',
     icon: 'mingcute:back-2-fill',
     handler() {
-      console.log('撤销')
+      state.commands.back.back()
     },
   },
   {
     label: '重做',
     icon: 'grommet-icons:power-reset',
     handler() {
-      console.log('重做')
+      state.commands.reset.reset()
     }
   }
 ]
@@ -85,7 +77,7 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
       <div class="editor-center-top">
         <div class="editor-center-top-button-group">
           <template v-for="button in buttonList" :key="button.label">
-            <div class="editor-center-top-button">
+            <div class="editor-center-top-button" @click="button.handler">
               <Icon class="icon" :icon="button.icon" />
               <span class="editor-center-top-button__tip">
                 {{ button.label }}
@@ -105,7 +97,16 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
           @click="canvasClick"
         >
           <template v-for="(block, index) in data.block" :key="block.id">
-            <Block :class="{ focus: block?.focus }" :block-config="block" @click="_mouseDown($event, block, index)" />
+            <Block
+              :style="{
+                top: `${block.top}px`,
+                left: `${block.left}px`,
+                zIndex: block.zIndex,
+              }"
+              :class="{ focus: block?.focus }"
+              :block-config="block"
+              @click="_mouseDown($event, block, index)"
+            />
           </template>
           <div v-if="_lineData?.x" :style="{ left: `${_lineData.x}px` }" class="lineX" />
           <div v-if="_lineData?.y" :style="{ top: `${_lineData.y}px` }" class="lineY" />
@@ -227,12 +228,17 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
           margin: 10px;
           cursor: pointer;
           color: #cccccc;
+          transition: all 0.2s;
           .icon {
             font-size: 20px;
           }
 
           &__tip {
             margin-left: 6px;
+          }
+
+          &:hover {
+            color: #54a9fd;
           }
         }
       }
