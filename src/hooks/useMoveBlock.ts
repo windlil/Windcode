@@ -11,7 +11,7 @@ interface blockConfig {
   height?: number
 }
 
-export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any[] }>, lastBlock: any) {
+export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any[] }>, lastBlock: any, data: any) {
   const moveState: any = {
     startX: 0,
     startY: 0,
@@ -40,8 +40,16 @@ export function useMoveBlock(focusList: ComputedRef<{ focus: any[]; unfocus: any
       } = {
         x: [],
         y: []
-      }
-      unfocus.forEach((block: blockConfig) => {
+      };
+
+      [...unfocus,
+        {
+          top: 0,
+          left: 0,
+          width: data.value.container.width,
+          height: data.value.container.height,
+        }
+      ].forEach((block: blockConfig) => {
         const { top: compareTop, left: compareLeft, width, height } = block
         // 拖拽元素的顶对齐比较元素的顶
         lines.y.push({ top: compareTop, linesTop: compareTop })
