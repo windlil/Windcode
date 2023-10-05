@@ -66,6 +66,30 @@ export function useCommand(data: any, setData: any) {
       eventsBus.on('drag:end', end)
     },
   })
+
+  registry({
+    name: 'import',
+    keyboard: 'crtl+d',
+    execute() {
+      return {
+        import() {
+          console.log('import')
+        }
+      }
+    }
+  })
+
+  registry({
+    name: 'export',
+    keyboard: 'ctrl+s',
+    execute() {
+      return {
+        export() {
+          return data.value
+        }
+      }
+    }
+  })
   return {
     state
   }

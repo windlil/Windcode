@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { showConfirmDialog } from 'vant'
 import { inject, reactive, ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import Block from '../block/index.vue'
@@ -24,6 +25,27 @@ const registerConfig = inject<any>('registerConfig')
 let _lineData = reactive<any>({})
 const { state } = useCommand(data, dataStore.setData)
 
+// Dialog
+const show = ref(false)
+const dialogTitle = ref('')
+
+// 导入导出数据
+const useData = reactive({
+  exportData: '',
+  importData: ''
+})
+const currentOpen = ref('')
+
+function importData() {
+  try {
+    data.value = JSON.parse(useData.importData)
+  }
+  catch {
+    console.warn('请输入正确的格式')
+  }
+  useData.importData = ''
+}
+
 const buttonList: buttonListItem[] = [
   {
     label: '撤销',
@@ -33,10 +55,37 @@ const buttonList: buttonListItem[] = [
     },
   },
   {
-    label: '重做',
+    label: '重置',
     icon: 'grommet-icons:power-reset',
     handler() {
-      state.commands.reset.reset()
+      showConfirmDialog({
+        title: '重置',
+        message:
+          '是否确认重置',
+      })
+        .then(() => {
+          state.commands.reset.reset()
+        })
+    }
+  },
+  {
+    label: '导出',
+    icon: 'mingcute:file-import-line',
+    handler() {
+      currentOpen.value = 'exportData'
+      show.value = true
+      dialogTitle.value = '导出数据'
+      useData.exportData = JSON.stringify(state.commands.export.export())
+    }
+  },
+  {
+    label: '导入',
+    icon: 'mingcute:file-export-line',
+    handler() {
+      currentOpen.value = 'importData'
+      show.value = true
+      dialogTitle.value = '导入数据'
+      state.commands.import.import()
     }
   }
 ]
@@ -116,6 +165,15 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
     <div class="editor-right">
       1
     </div>
+    <van-dialog
+      v-model:show="show"
+      :show-confirm-button="currentOpen === 'importData'"
+      show-cancel-button class="diglog" width="500"
+      :title="dialogTitle"
+      @confirm="importData"
+    >
+      <textarea v-model="(useData as any)[currentOpen]" cols="50" rows="25" />
+    </van-dialog>
   </div>
 </template>
 
@@ -261,5 +319,22 @@ const { _mouseDown, canvasClick, focusData, lastSelectedIndexBlock } = useFocus(
       }
     }
   }
+
+  .diglog {
+    textarea {
+      box-sizing: border-box;
+      outline: none;
+      padding: 10px;
+      margin-top: 20px;
+      border: 1px solid #dddddd;
+      resize: none;
+    }
+  }
+}
+
+:deep(.van-dialog__content) {
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }
 </style>
